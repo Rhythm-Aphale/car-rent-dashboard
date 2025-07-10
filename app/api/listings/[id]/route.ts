@@ -3,10 +3,11 @@ import { getListingById, updateListing } from '@/lib/listingsData';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const listing = getListingById(params.id);
+    const { id } = await params;
+    const listing = getListingById(id);
     
     if (!listing) {
       return NextResponse.json(
@@ -26,11 +27,12 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const updates = await request.json();
-    const updatedListing = updateListing(params.id, updates);
+    const updatedListing = updateListing(id, updates);
     
     if (!updatedListing) {
       return NextResponse.json(
